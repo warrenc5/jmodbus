@@ -38,6 +38,7 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -62,9 +63,10 @@ public class ModbusTCPSlave extends ModbusSlave {
      * @param slaveAddress The slave address of this device.
      * @param socket The TCP socket to be used to communicate by
      *               the TCP transport for this slave object.
+     * @throws IOException 
      *
      */
-    public ModbusTCPSlave(int slaveAddress, Socket socket) {
+    public ModbusTCPSlave(int slaveAddress, Socket socket) throws IOException {
 	super(new ModbusTCPTransport(socket), slaveAddress);
     }
 }

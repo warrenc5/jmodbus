@@ -38,8 +38,13 @@
 
 package net.sourceforge.jmodbus;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to implement a TCP transport mechanisim for Modbus communication.  
@@ -50,6 +55,7 @@ import java.net.*;
  */
 public class ModbusTCPTransport implements ModbusTransport {
     
+	private static final Logger log = LoggerFactory.getLogger(ModbusTCPTransport.class.getName());
     /**
      * The TCP port number that Modbus TCP services should operate
      * over.
@@ -112,7 +118,7 @@ public class ModbusTCPTransport implements ModbusTransport {
      * a socket to communicate over.  This constructor passes a reference
      * to this socket
      */	
-    public ModbusTCPTransport(Socket socket) {
+    public ModbusTCPTransport(Socket socket) throws IOException  {
 	this.socket = socket;
 	// Setup the inoput and output streams
 	try {
@@ -122,15 +128,15 @@ public class ModbusTCPTransport implements ModbusTransport {
 	catch (IOException ex) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 1) {
-		System.out.println(ex.getMessage());
+		log.debug(ex.getMessage());
 		ex.printStackTrace();
 	    }
-	    return;
+        throw ex;
 	}
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 1) {
-	    System.out.println("ModbusTCPTransport: constructor complete");
+	    log.debug("ModbusTCPTransport: constructor complete");
 	}
     }
     
@@ -139,7 +145,7 @@ public class ModbusTCPTransport implements ModbusTransport {
      * a socket to communicate over.  This constructor will create a
      * new socket on the specified port to the specified host. 
      */	
-    public ModbusTCPTransport(String host, int port) {		
+    public ModbusTCPTransport(String host, int port) throws IOException {		
 	
 	// Setup the socket and input and output streams
 	try {
@@ -150,15 +156,15 @@ public class ModbusTCPTransport implements ModbusTransport {
 	catch (IOException ex) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 1) {
-		System.out.println(ex.getMessage());
+		log.debug(ex.getMessage());
 		ex.printStackTrace();
 	    }
-	    return;
+        throw ex;
 	}
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 1) {
-	    System.out.println("ModbusTCPTransport: constructor complete");
+	    log.debug("ModbusTCPTransport: constructor complete");
 	}
     }
     
@@ -172,11 +178,11 @@ public class ModbusTCPTransport implements ModbusTransport {
      * @return    Transmission sucess flag, to indicate if the transmission
      *            was sucessful.
      */
-    public boolean sendFrame(ModbusMessage msg) {
+    public boolean sendFrame(ModbusMessage msg) throws IOException {
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 3) {
-	    System.out.println("ModbusTCPTransport: Sending Frame.....");
+	    log.debug("ModbusTCPTransport: Sending Frame.....");
 	}
 	
 	// First create a header...
@@ -195,8 +201,8 @@ public class ModbusTCPTransport implements ModbusTransport {
 	try {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 4) {
-		System.out.println("ModbusTCPTransport: Header");
-		System.out.println(ByteUtils.toHex(send_header,HEADER_LENGTH));
+		log.debug("ModbusTCPTransport: Header");
+		log.debug(ByteUtils.toHex(send_header,HEADER_LENGTH));
 	    }
 	    
 	    // Now send the header then the body of the mesage			
@@ -207,15 +213,15 @@ public class ModbusTCPTransport implements ModbusTransport {
 	}
 	catch (IOException ex) {
 	    if (Modbus.debug >= 3) {
-		System.out.println(ex.getMessage());
+		log.debug(ex.getMessage());
 		ex.printStackTrace();
 	    }
-	    return false;
+        throw ex;
 	}
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 3) {
-	    System.out.println("ModbusTCPTransport: Frame sent");
+	    log.debug("ModbusTCPTransport: Frame sent");
 	}				
 	return true;
     }
@@ -230,10 +236,10 @@ public class ModbusTCPTransport implements ModbusTransport {
      * @param msg The Modbus Message object for received data to be written into
      * @return    Receive sucess flag, to indicate if the receive was sucessful.
      */
-    public boolean receiveFrame(ModbusMessage msg) {
+    public boolean receiveFrame(ModbusMessage msg) throws IOException {
 	// Print Message if in debug mode
 	if (Modbus.debug >= 3) {
-	    System.out.println("ModbusTCPTransport: Receiveing Frame.....");
+	    log.debug("ModbusTCPTransport: Receiveing Frame.....");
 	}
 	
 	// Read HEADER_LENGTH bytes into the message buffer.  
@@ -246,15 +252,15 @@ public class ModbusTCPTransport implements ModbusTransport {
 	    }
 	    catch (IOException ex) {
 		if (Modbus.debug >= 3) {
-		    System.out.println(ex.getMessage());
+		    log.debug(ex.getMessage());
 		    ex.printStackTrace();
 		}
-		return false;
+        throw ex;
 	    }
 	    if (recv == -1) {
 		// Print Message if in debug mode
 		if (Modbus.debug >= 2) {
-		    System.out.println("ModbusTCPTransport: Stream Closed, receive returning -1");
+		    log.debug("ModbusTCPTransport: Stream Closed, receive returning -1");
 		}
 		return false;
 	    }
@@ -263,8 +269,8 @@ public class ModbusTCPTransport implements ModbusTransport {
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 4) {
-	    System.out.println("ModbusTCPTransport: Header Received");
-	    System.out.println(ByteUtils.toHex(receive_header,HEADER_LENGTH));
+	    log.debug("ModbusTCPTransport: Header Received");
+	    log.debug(ByteUtils.toHex(receive_header,HEADER_LENGTH));
 	}
 	
 	// We now need to see if the header is of a form that
@@ -284,7 +290,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 	if (protocol_identifier != PROTOCOL_IDENTIFIER) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 3) {
-		System.out.println("ModbusTCPTransport: incorrect protocol identifier: " + protocol_identifier);
+		log.debug("ModbusTCPTransport: incorrect protocol identifier: " + protocol_identifier);
 	    }
 	    header_check = false;
 	}
@@ -294,7 +300,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 	if (receive_header[4] != (byte) 0x00) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 3) {
-		System.out.println("ModbusTCPTransport: incorrect length, upper byte: " + receive_header[4]);
+		log.debug("ModbusTCPTransport: incorrect length, upper byte: " + receive_header[4]);
 	    }
 	    header_check = false;
 	}
@@ -305,7 +311,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 	if (receive_header[5] == (byte) 0x00 || receive_header[5] == (byte) 0x01) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 3) {
-		System.out.println("ModbusTCPTransport: incorrect length, lower byte: " + receive_header[5]);
+		log.debug("ModbusTCPTransport: incorrect length, lower byte: " + receive_header[5]);
 	    }
 	    header_check = false;
 	}
@@ -315,7 +321,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 	if (!header_check) {
 	    // Print Message if in debug mode
 	    if (Modbus.debug >= 3) {
-		System.out.println("ModbusTCPTransport: Header Check Failed!");
+		log.debug("ModbusTCPTransport: Header Check Failed!");
 	    }
 	    try {
 		socket.close();
@@ -331,7 +337,7 @@ public class ModbusTCPTransport implements ModbusTransport {
 	
 	// Print Message if in debug mode
 	if (Modbus.debug >= 3) {
-	    System.out.println("ModbusTCPTransport: Message Body Length is " + request_body_length);
+	    log.debug("ModbusTCPTransport: Message Body Length is " + request_body_length);
 	}
 	
 	// Now get the rest of the message
@@ -345,15 +351,15 @@ public class ModbusTCPTransport implements ModbusTransport {
 	    catch (IOException ex) {
 				// Print Message if in debug mode
 		if (Modbus.debug >= 3) {
-		    System.out.println(ex.getMessage());
+		    log.debug(ex.getMessage());
 		    ex.printStackTrace();
 		}
-		return false;
+        throw ex;
 	    }
 	    if (recv == -1) {
 		// Print Message if in debug mode
 		if (Modbus.debug >= 2) {
-		    System.out.println("ModbusTCPTransport: Stream Closed, receive returning -1");
+		    log.debug("ModbusTCPTransport: Stream Closed, receive returning -1");
 		}
 		return false;
 	    }
@@ -365,10 +371,27 @@ public class ModbusTCPTransport implements ModbusTransport {
 		
 	// Print Message if in debug mode
 	if (Modbus.debug >= 3) {
-	    System.out.println("ModbusTCPTransport: Frame receieved");
+	    log.debug("ModbusTCPTransport: Frame receieved");
 	}				
 	return true;
     }
+
+	@Override
+	public void disconnect() {
+        try {
+			this.socket.close();
+		} catch (IOException e) {
+			log.warn(e.getMessage());
+		}
+		
+	}
+
+	@Override
+	public String toString() {
+        return socket.toString();
+	}
+    
+	
 }
 
 

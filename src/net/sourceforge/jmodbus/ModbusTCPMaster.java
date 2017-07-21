@@ -38,6 +38,8 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
+
 /**
  * Class to implement a Modbus TCP Master device.  This class only
  * defines what type of transport if to be used, all the work in 
@@ -58,10 +60,13 @@ public class ModbusTCPMaster extends ModbusMaster {
      * @param host The string name of the host to connect to.
      * @param port The port number to connect to on eht specified
      *             host.
+     * @throws IOException 
      */
-    public ModbusTCPMaster(String host, int port) {
+    public ModbusTCPMaster(String host, int port) throws IOException {
 	super(new ModbusTCPTransport(host, port));
     }
+    
+    
 }
 
 

@@ -38,6 +38,8 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
+
 /**
  * Interface for Modbus transport mechanisims.  This is the interface
  * that will be implemented by classes representing the transports for the
@@ -62,7 +64,7 @@ public interface ModbusTransport {
      * @return    Transmission sucess flag, to indicate if the transmission
      *            was sucessful.
      */
-    public boolean sendFrame(ModbusMessage msg);
+    public boolean sendFrame(ModbusMessage msg) throws IOException;
     
     /**
      * Method to receive a Modbus frame via the transport media.  The return 
@@ -73,7 +75,10 @@ public interface ModbusTransport {
      *
      * @param msg The Modbus Message object for received data to be written into
      * @return    Receive sucess flag, to indicate if the receive was sucessful.
+     * @throws IOException 
      */
-    public boolean receiveFrame(ModbusMessage msg);
+    public boolean receiveFrame(ModbusMessage msg) throws IOException;
+
+	public void disconnect();
 }
 

@@ -623,6 +623,8 @@ public class ModbusASCIITransport implements ModbusTransport {
 	    throw(new IllegalArgumentException("ModbusASCIITransport: illegal nibble value" + nibble));
 	}
     }
+
+    public void disconnect() {}
 }
 
 

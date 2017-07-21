@@ -38,6 +38,11 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Class to represent a Modbus device.  This is a base class
  * that will be extended by classes representing both Master and Slave
@@ -63,7 +68,8 @@ public class Modbus {
      *          messaging level and transport level.
      * </UL>
      */
-    public static final int debug = 0;
+    public static final int debug = Integer.parseInt(System.getProperty("jmodbus.debug","3"));
+    private final Logger log = LoggerFactory.getLogger(Modbus.class.getName());
     
     /**
      * Command code to read multiple registers.
@@ -209,13 +215,13 @@ public class Modbus {
      * @return    Transmission sucess flag, to indicate if the transmission
      *            was sucessful.
      */
-    public boolean sendFrame(ModbusMessage msg) {
+    public boolean sendFrame(ModbusMessage msg) throws IOException {
 	
 	if (debug >= 4) {
-	    System.out.println("Modbus: Sending Frame");
-	    System.out.println("Transaction ID: " + msg.transID);
-	    System.out.println("Frame Length: " + msg.length);
-	    System.out.println(ByteUtils.toHex(msg.buff,msg.length));
+	    log.debug("Modbus: Sending Frame");
+	    log.debug("Transaction ID: " + msg.transID);
+	    log.debug("Frame Length: " + msg.length);
+	    log.debug(ByteUtils.toHex(msg.buff,msg.length));
 	}
 
         return transport.sendFrame(msg);
@@ -232,16 +238,24 @@ public class Modbus {
      * @param msg The Modbus Message object for received data to be written into
      * @return    Receive sucess flag, to indicate if the receive was sucessful.
      */
-    public boolean receiveFrame(ModbusMessage msg) {
+    public boolean receiveFrame(ModbusMessage msg) throws IOException {
 	
 	if (debug >= 4) {
-	    System.out.println("Modbus: Receiveing Frame");
-	    System.out.println("Transaction ID: " + msg.transID);
-	    System.out.println("Frame Length: " + msg.length);
-	    System.out.println(ByteUtils.toHex(msg.buff,msg.length));
+	    log.debug("Modbus: Receiveing Frame");
+	    log.debug("Transaction ID: " + msg.transID);
+	    log.debug("Frame Length: " + msg.length);
+	    log.debug(ByteUtils.toHex(msg.buff,msg.length));
 	}
 
         return transport.receiveFrame(msg);
+    }
+    
+    public ModbusTransport getTransport() {
+		return transport;
+	}    
+    
+    public void disconnect() {
+    	this.transport.disconnect();
     }
 }
 

@@ -264,6 +264,8 @@ public class ModbusRTUTransport implements ModbusTransport {
 	
 	return ((byte)(fflsacc+1));	
     }
+
+    public void disconnect() {}
 }
 
 

@@ -38,6 +38,11 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Class to represent a Modbus Master device.  This is a base class
  * that will be extended by classes representing the different transports.
@@ -52,6 +57,7 @@ public class ModbusMaster extends Modbus {
     // sent from	
     private ModbusMessage request;	
     private ModbusMessage response;	
+	private static final Logger log = LoggerFactory.getLogger(ModbusTCPTransport.class.getName());
     
     /**
      * Class constructor.  Accepts a ModbusTransport object that
@@ -85,11 +91,12 @@ public class ModbusMaster extends Modbus {
      * @param length The number of register to be read.
      * @param results Refernce to the int array to which 
      *                results should be written.
+     * @throws IOException 
      */
     public boolean readMultipleRegisters(int reference, 
 					 int length,
 					 int[] results) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	return readMultipleRegisters(0,reference,length,0,results);
     }
 
@@ -113,16 +120,17 @@ public class ModbusMaster extends Modbus {
      *                transaction.
      * @param results Refernce to the int array to which 
      *                results should be written.
+     * @throws IOException 
      */
     public boolean readMultipleRegisters(int unitID,
 					 int reference, 
 					 int length,
 					 int transID,
 					 int[] results) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	
 	if (debug >= 2) {
-	    System.out.println("ModbusMaster: Preparing READ_MULTIPLE_REGISTERS command");
+	    log.debug("ModbusMaster: Preparing READ_MULTIPLE_REGISTERS command");
 	}
 
 	// The first thing we want to do is perform bounds
@@ -183,7 +191,7 @@ public class ModbusMaster extends Modbus {
 	// We must now send the request
 	if (!sendFrame(request)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: sendFrame failed!");
+		log.debug("ModbusMaster: sendFrame failed!");
 	    }			
 	    return false;
 	}
@@ -191,7 +199,7 @@ public class ModbusMaster extends Modbus {
 	// First we must get the request....
 	if (!receiveFrame(response)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: receiveFrame failed!");
+		log.debug("ModbusMaster: receiveFrame failed!");
 	    }			
 	    return false;
 	}
@@ -202,7 +210,7 @@ public class ModbusMaster extends Modbus {
 	// (in the case of an exception, so make sure it is)
 	if (response.length < 3) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Invalid response length");
+		log.debug("ModbusMaster: Invalid response length");
 	    }			
 	    return false;
 	}
@@ -211,7 +219,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct transaction ID
 	if (response.transID != transID) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect response transaction ID");
+		log.debug("ModbusMaster: Incorrect response transaction ID");
 	    }			
 	    return false;
 	}
@@ -220,7 +228,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct unit identifier
 	if (response.buff[0] != ((byte)((unitID >> 0) & 0xFF))) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect unit ID");
+		log.debug("ModbusMaster: Incorrect unit ID");
 	    }			
 	    return false;
 	}
@@ -228,7 +236,7 @@ public class ModbusMaster extends Modbus {
 	// For an exception
 	if (response.buff[1] == (READ_MULTIPLE_REGISTERS & EXCEPTION_MODIFIER)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Modbus Exception");
+		log.debug("ModbusMaster: Modbus Exception");
 	    }			
 	    return false;
 	}
@@ -237,7 +245,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct function code
 	if (response.buff[1] != READ_MULTIPLE_REGISTERS) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Incorrect return function code");
+		log.debug("ModbusMaster: Incorrect return function code");
 	    }			
 	    return false;
 	}
@@ -247,13 +255,13 @@ public class ModbusMaster extends Modbus {
 	// byte count to follow value
 	if (response.length != (3+response.buff[2])) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Invalid length - bytes to follow");
+		log.debug("ModbusMaster: Invalid length - bytes to follow");
 	    }			
 	    return false;
 	}
 	if (response.length != (3+2*length)) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Invalid length - requested registers");
+		log.debug("ModbusMaster: Invalid length - requested registers");
 	    }			
 	    return false;
 	}
@@ -261,7 +269,7 @@ public class ModbusMaster extends Modbus {
 	// At this stage we now know that we havea  valid response and all
 	// we are required to do is parse the register values.
 	for (int i=0; i<length; i++) {
-	    results[i] = ((response.buff[3+2*i] << 8) + (response.buff[4+2*i] << 0)) & 0xFFFF;
+	    results[i] = ( ( (response.buff[3+2*i] << 8) & 0xff00) | ( (response.buff[4+2*i] << 0)  & 0x00ff) ) & 0xFFFF;
 	} 
 
 	// Assuming this worked and did not thow an 
@@ -286,11 +294,12 @@ public class ModbusMaster extends Modbus {
      * @param length The number of register to be read.
      * @param results Refernce to the int array to which 
      *                results should be written.
+     * @throws IOException 
      */
     public boolean readInputRegisters(int reference, 
 				      int length,
 				      int[] results) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	return readInputRegisters(0,reference,length,0,results);
     }
 
@@ -320,10 +329,10 @@ public class ModbusMaster extends Modbus {
 				      int length,
 				      int transID,
 				      int[] results) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	
 	if (debug >= 2) {
-	    System.out.println("ModbusMaster: Preparing READ_INPUT_REGISTERS command");
+	    log.debug("ModbusMaster: Preparing READ_INPUT_REGISTERS command");
 	}
 
 	// The first thing we want to do is perform bounds
@@ -384,7 +393,7 @@ public class ModbusMaster extends Modbus {
 	// We must now send the request
 	if (!sendFrame(request)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: sendFrame failed!");
+		log.debug("ModbusMaster: sendFrame failed!");
 	    }			
 	    return false;
 	}
@@ -392,7 +401,7 @@ public class ModbusMaster extends Modbus {
 	// First we must get the request....
 	if (!receiveFrame(response)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: receiveFrame failed!");
+		log.debug("ModbusMaster: receiveFrame failed!");
 	    }			
 	    return false;
 	}
@@ -403,7 +412,7 @@ public class ModbusMaster extends Modbus {
 	// (in the case of an exception, so make sure it is)
 	if (response.length < 3) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Invalid response length");
+		log.debug("ModbusMaster: Invalid response length");
 	    }			
 	    return false;
 	}
@@ -412,7 +421,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct transaction ID
 	if (response.transID != transID) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect response transaction ID");
+		log.debug("ModbusMaster: Incorrect response transaction ID");
 	    }			
 	    return false;
 	}
@@ -421,7 +430,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct unit identifier
 	if (response.buff[0] != ((byte)((unitID >> 0) & 0xFF))) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect unit ID");
+		log.debug("ModbusMaster: Incorrect unit ID");
 	    }			
 	    return false;
 	}
@@ -429,7 +438,7 @@ public class ModbusMaster extends Modbus {
 	// For an exception
 	if (response.buff[1] == (READ_INPUT_REGISTERS & EXCEPTION_MODIFIER)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Modbus Exception");
+		log.debug("ModbusMaster: Modbus Exception");
 	    }			
 	    return false;
 	}
@@ -438,7 +447,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct function code
 	if (response.buff[1] != READ_INPUT_REGISTERS) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Incorrect return function code");
+		log.debug("ModbusMaster: Incorrect return function code");
 	    }			
 	    return false;
 	}
@@ -448,13 +457,13 @@ public class ModbusMaster extends Modbus {
 	// byte count to follow value
 	if (response.length != (3+response.buff[2])) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Invalid length - bytes to follow");
+		log.debug("ModbusMaster: Invalid length - bytes to follow");
 	    }			
 	    return false;
 	}
 	if (response.length != (3+2*length)) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Invalid length - requested registers");
+		log.debug("ModbusMaster: Invalid length - requested registers");
 	    }			
 	    return false;
 	}
@@ -462,7 +471,7 @@ public class ModbusMaster extends Modbus {
 	// At this stage we now know that we havea  valid response and all
 	// we are required to do is parse the register values.
 	for (int i=0; i<length; i++) {
-	    results[i] = ((response.buff[3+2*i] << 8) + (response.buff[4+2*i] << 0)) & 0xFFFF;
+	    results[i] = ( ( (response.buff[3+2*i] << 8) & 0xff00) | ( (response.buff[4+2*i] << 0)  & 0x00ff) ) & 0xFFFF;
 	} 
 
 	// Assuming this worked and did not thow an 
@@ -487,11 +496,12 @@ public class ModbusMaster extends Modbus {
      * @param length The number of register to be read.
      * @param valuess Refernce to the int array to which 
      *                results should be written.
+     * @throws IOException 
      */
     public boolean writeMultipleRegisters(int reference, 
 				      int length,
 				      int[] values) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	return writeMultipleRegisters(0,reference,length,0,values);
     }
 
@@ -515,16 +525,17 @@ public class ModbusMaster extends Modbus {
      *                transaction.
      * @param values Refernce to the int array to which 
      *                results should be written.
+     * @throws IOException 
      */
     public boolean writeMultipleRegisters(int unitID,
 					  int reference, 
 					  int length,
 					  int transID,
 					  int[] values) 
-	throws IllegalArgumentException {
+	throws IllegalArgumentException, IOException {
 	
 	if (debug >= 2) {
-	    System.out.println("ModbusMaster: Preparing WRITE_MULTIPLE_REGISTERS command");
+	    log.debug("ModbusMaster: Preparing WRITE_MULTIPLE_REGISTERS command");
 	}
 
 	// The first thing we want to do is perform bounds
@@ -595,7 +606,7 @@ public class ModbusMaster extends Modbus {
 	// We must now send the request
 	if (!sendFrame(request)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: sendFrame failed!");
+		log.debug("ModbusMaster: sendFrame failed!");
 	    }			
 	    return false;
 	}
@@ -603,7 +614,7 @@ public class ModbusMaster extends Modbus {
 	// First we must get the request....
 	if (!receiveFrame(response)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: receiveFrame failed!");
+		log.debug("ModbusMaster: receiveFrame failed!");
 	    }			
 	    return false;
 	}
@@ -614,7 +625,7 @@ public class ModbusMaster extends Modbus {
 	// (in the case of an exception, so make sure it is)
 	if (response.length < 3) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Invalid response length");
+		log.debug("ModbusMaster: Invalid response length");
 	    }			
 	    return false;
 	}
@@ -623,7 +634,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct transaction ID
 	if (response.transID != transID) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect response transaction ID");
+		log.debug("ModbusMaster: Incorrect response transaction ID");
 	    }			
 	    return false;
 	}
@@ -632,7 +643,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct unit identifier
 	if (response.buff[0] != ((byte)((unitID >> 0) & 0xFF))) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Incorrect unit ID");
+		log.debug("ModbusMaster: Incorrect unit ID");
 	    }			
 	    return false;
 	}
@@ -640,7 +651,7 @@ public class ModbusMaster extends Modbus {
 	// For an exception
 	if (response.buff[1] == (WRITE_MULTIPLE_REGISTERS & EXCEPTION_MODIFIER)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusMaster: Modbus Exception");
+		log.debug("ModbusMaster: Modbus Exception");
 	    }			
 	    return false;
 	}
@@ -649,7 +660,7 @@ public class ModbusMaster extends Modbus {
 	// has the correct function code
 	if (response.buff[1] != WRITE_MULTIPLE_REGISTERS) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Incorrect return function code");
+		log.debug("ModbusMaster: Incorrect return function code");
 	    }			
 	    return false;
 	}
@@ -666,7 +677,7 @@ public class ModbusMaster extends Modbus {
 	// expect to be 6
 	if (response.length != 6) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Invalid length - requested registers");
+		log.debug("ModbusMaster: Invalid length - requested registers");
 	    }			
 	    return false;
 	}
@@ -674,7 +685,7 @@ public class ModbusMaster extends Modbus {
 	// Check that the reference number
 	if (reference != ((response.buff[2] << 8) + (response.buff[3] << 0) & 0xFFFF)) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Incorrect return reference number");
+		log.debug("ModbusMaster: Incorrect return reference number");
 	    }			
 	    return false;
 	}
@@ -682,7 +693,7 @@ public class ModbusMaster extends Modbus {
 	// Check that the word count
 	if (length != ((response.buff[4] << 8) + (response.buff[5] << 0) & 0xFFFF )) {
 	    if (debug >= 3) {
-		System.out.println("ModbusMaster: Incorrect return word count");
+		log.debug("ModbusMaster: Incorrect return word count");
 	    }			
 	    return false;
 	}

@@ -38,6 +38,8 @@
 
 package net.sourceforge.jmodbus;
 
+import java.io.IOException;
+
 /**
  * Class to represent a Modbus Slave device.  This is a base class
  * that will be extended by classes representing the different transports.
@@ -48,8 +50,11 @@ package net.sourceforge.jmodbus;
  *
  * @author Kelvin Proctor
  */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class ModbusSlave extends Modbus implements Runnable {
     
+	private static final Logger log = LoggerFactory.getLogger(ModbusTCPTransport.class.getName());
     // Registers and coils to read from and write to
     private ModbusRegisterBank input_registers;
     private ModbusRegisterBank output_registers;
@@ -110,7 +115,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	input_registers_enabled = true;
 
 	if (debug >= 3) {
-	    System.out.println("ModbusSlave: Input Registers Enabled");
+	    log.debug("ModbusSlave: Input Registers Enabled");
 	}
     }
     
@@ -129,7 +134,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	output_registers_enabled = true;
 
 	if (debug >= 3) {
-	    System.out.println("ModbusSlave: Output Registers Enabled");
+	    log.debug("ModbusSlave: Output Registers Enabled");
 	}
     }
     
@@ -148,7 +153,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	input_coils_enabled = true;
 
 	if (debug >= 3) {
-	    System.out.println("ModbusSlave: Input Coils Enabled");
+	    log.debug("ModbusSlave: Input Coils Enabled");
 	}
     }
     
@@ -167,7 +172,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	output_coils_enabled = true;
 
 	if (debug >= 3) {
-	    System.out.println("ModbusSlave: Output Coils Enabled");
+	    log.debug("ModbusSlave: Output Coils Enabled");
 	}
     }
 
@@ -184,12 +189,16 @@ public class ModbusSlave extends Modbus implements Runnable {
 	boolean retval = true;
 	
 	if (debug >= 1) {
-	    System.out.println("ModbusSlave: Starting run loop......");
+	    log.debug("ModbusSlave: Starting run loop......");
 	}
 
 	// Just sit here and process requests all day...		
 	while (retval) {
-	    retval = processRequest();
+	    try {
+			retval = processRequest();
+		} catch (IOException e) {
+            log.error(e.getMessage(),e);
+		}
 	}	
     }	
     
@@ -202,14 +211,15 @@ public class ModbusSlave extends Modbus implements Runnable {
      * a sucess.
      *
      * @author Kelvin Proctor
+     * @throws IOException 
      *
      */
-    public boolean processRequest() {
+    public boolean processRequest() throws IOException {
 	
 	// First we must get the request....
 	if (!receiveFrame(request)) {
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: receiveFrame failed!");
+		log.debug("ModbusSlave: receiveFrame failed!");
 	    }			
 	    return false;
 	}
@@ -221,7 +231,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	    // We will return true for we have sucessfully processed 
 	    // the request (by doing nothing as it wsn't for us)
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: message not addressed to us, address:" + request.buff[0]);
+		log.debug("ModbusSlave: message not addressed to us, address:" + request.buff[0]);
 	    }			
 	    
 	    return true; 
@@ -234,7 +244,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	case READ_MULTIPLE_REGISTERS:
 	    // Print Message if in debug mode
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: process READ_MULTIPLE_REGISTERS comand");
+		log.debug("ModbusSlave: process READ_MULTIPLE_REGISTERS comand");
 	    }
 	    processReadMultipleRegisters();
 	    break;
@@ -242,7 +252,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	case READ_INPUT_REGISTERS:
 	    // Print Message if in debug mode
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: process READ_INPUT_REGISTERS comand");
+		log.debug("ModbusSlave: process READ_INPUT_REGISTERS comand");
 	    }
 	    processReadInputRegisters();
 	    break;
@@ -250,7 +260,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	case WRITE_MULTIPLE_REGISTERS:
 	    // Print Message if in debug mode
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: process WRITE_MULTIPLE_REGISTERS comand");
+		log.debug("ModbusSlave: process WRITE_MULTIPLE_REGISTERS comand");
 	    }
 	    processWriteMultipleRegisters();
 	    break;
@@ -259,7 +269,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	    // The function code is unknown
 	    // Print Message if in debug mode
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: process unknown comand :" + request.buff[1]);
+		log.debug("ModbusSlave: process unknown comand :" + request.buff[1]);
 	    }
 	    generateException(ILLEGAL_FUNCTION);
 	    break;
@@ -270,7 +280,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	if (sendFrame(response)) {
 
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: Response sent correctly");
+		log.debug("ModbusSlave: Response sent correctly");
 	    }
 
 	    return true;
@@ -278,7 +288,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	else {
 
 	    if (debug >= 2) {
-		System.out.println("ModbusSlave: Response send failed!");
+		log.debug("ModbusSlave: Response send failed!");
 	    }
 
 	    return false;
@@ -290,7 +300,7 @@ public class ModbusSlave extends Modbus implements Runnable {
 	
 	// Print Message if in debug mode
 	if (debug >= 2) {
-	    System.out.println("ModbusSlave: Exception with code "+ByteUtils.toHex(exception_code));
+	    log.debug("ModbusSlave: Exception with code "+ByteUtils.toHex(exception_code));
 	}
 	
 	// Set the unit identifier
@@ -329,8 +339,8 @@ public class ModbusSlave extends Modbus implements Runnable {
 	    number = ((request.buff[4] << 8) + (request.buff[5] << 0)) & 0xFFFF;
 	    // Print Message if in debug mode
 	    if (debug >= 3) {
-		System.out.println("Offset: "+offset);
-		System.out.println("Number of Words: "+number);
+		log.debug("Offset: "+offset);
+		log.debug("Number of Words: "+number);
 	    }
 	    
 	    // We now need to check that this is within bounds of our
@@ -403,8 +413,8 @@ public class ModbusSlave extends Modbus implements Runnable {
 	    number = ((request.buff[4] << 8) + (request.buff[5] << 0)) & 0xFFFF;
 	    // Print Message if in debug mode
 	    if (debug >= 3) {
-		System.out.println("Offset: "+offset);
-		System.out.println("Number of Words: "+number);
+		log.debug("Offset: "+offset);
+		log.debug("Number of Words: "+number);
 	    }
 	    
 	    // We now need to check that this is within bounds of our
@@ -477,8 +487,8 @@ public class ModbusSlave extends Modbus implements Runnable {
 	    number = ((request.buff[4] << 8) + (request.buff[5] << 0)) & 0xFFFF;
 	    // Print Message if in debug mode
 	    if (debug >= 3) {
-		System.out.println("Offset: "+offset);
-		System.out.println("Number of Words: "+number);
+		log.debug("Offset: "+offset);
+		log.debug("Number of Words: "+number);
 	    }
 	    
 	    // We now need to check that this is within bounds of our
