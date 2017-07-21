@@ -1,0 +1,37 @@
+<html>
+
+  <head>
+    <title>The jModbus Project - Class Structure</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <h1 style="margin-top: 10pt; font-family: Verdana, Tahoma, Arial,
+      Helvetica, sans-serif; font-size: x-large; font-weight: normal;">
+      <span style="color: gray;">The j</span><span style="font-weight:
+      bold;">Modbus</span> <span style="color: gray;">Project - Class 
+      Structure</span> 
+    </h1>
+
+  <P> 
+    The following diagrams illustrate the basic class structure for
+    the jModbus project.
+  </P>
+
+  <P>
+    The main class structure illustrates the base Modbus class and master 
+    and slave implementations, and how these relate to the transport specific 
+    implementations.
+    <CENTER><IMG SRC="images/modbus-classes.gif"></CENTER>
+  </P>
+
+  <P>
+    The ModbusTransport structure shows how the three transport methods are
+    implemented independantly but allow for the interchanging of transports
+    easily.
+    <CENTER><IMG SRC="images/modbustransport-classes.gif"></CENTER>
+  </P>
+
+  </body>
+
+</html>

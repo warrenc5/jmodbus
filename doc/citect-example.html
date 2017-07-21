@@ -1,0 +1,58 @@
+<html>
+
+  <head>
+    <title>The jModbus Project - Citect Example</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <h1 style="margin-top: 10pt; font-family: Verdana, Tahoma, Arial,
+      Helvetica, sans-serif; font-size: x-large; font-weight: normal;">
+      <span style="color: gray;">The j</span><span style="font-weight:
+      bold;">Modbus</span> <span style="color: gray;">Project - Citect 
+      Example</span> 
+    </h1>
+
+  <P> 
+    The following pages shows the setup and trend screen from a Citect project
+    that talks to a TINI to read temperature values from DS18S20 chips via a 
+    ModbusTCP link.  This citect project is located in the examples/citect directory
+    of the distribution, called modnet.zip.
+  </P>
+
+  <P>
+    A basic knowledge of Citect is assumed.  This project has 1 IO Server (IOServer) and 
+    1 TCPIP board (Board1).
+  </P>
+
+  <P>
+    The ports are setup as shown below from the Citect Project Editor.  Of particular note
+    is the special options field that contains the string "-I159.111.194.61 -P502 -T"
+    that specifies the IP address of the port with -I flag, the port number with the -P flag 
+    and the -T flag to indicate that a TCP connection is to be used, as opposed to UDP.<BR>
+    <CENTER><IMG SRC="images/citect-ports.gif"></CENTER>
+  </P>
+	
+  <P>
+    The devices are setup as shown below from the Citect Project Editor.  This simply specifies
+    that the MODNET (ModbusTCP) protocol is to be used to communicate with the device.<BR>
+    <CENTER><IMG SRC="images/citect-devices.gif"></CENTER>
+  </P>
+	
+  <P>
+    The variables are setup as shown below from the Citect Project Editor.  This shows that
+    the variable is being read from the 3xxxxx range (input registers) and the scaling that
+    is used to convert between the UINT value used read from the DS18S20 chips to a decimal
+    degreese celcius value.<BR>
+    <CENTER><IMG SRC="images/citect-variables.gif"></CENTER>
+  </P>
+	
+  <P>
+    This project also included a trend screen of the the 8 sensors attached to the two TINIs.
+    A sample from the trend screen is displayed below.<BR>
+    <CENTER><IMG SRC="images/citect-trend.gif"></CENTER>
+  </P>
+
+  </body>
+
+</html>

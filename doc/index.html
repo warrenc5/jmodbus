@@ -1,0 +1,135 @@
+<html>
+
+  <head>
+    <title>The jModbus Project</title>
+    <meta name="keywords" content="modbus, serial, tcp, modnet, PLC, Citect, Java, TINI, metadata">
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <h1 style="margin-top: 10pt; font-family: Verdana, Tahoma, Arial,
+      Helvetica, sans-serif; font-size: x-large; font-weight: normal;">
+      <span style="color: gray;">The j</span><span style="font-weight:
+      bold;">Modbus</span> <span style="color:
+      gray;">Project</span>
+    </h1>
+
+    <table cellpadding="4">
+      <tbody>
+
+	<tr valign="top">
+
+	  <td bgcolor="#eeeeff" width="150">
+
+	    <h2><span style="font-weight: normal;">j</span><span
+	    style="color: black; font-weight: bold;">Modbus</span></h2>
+
+	    <p>
+	    <UL>
+	       <LI><a href="http://prdownloads.sourceforge.net/jmodbus/jmodbus-0_1_1.tar.gz">Download TAR GZIP</a><br>
+	       <LI><a href="http://prdownloads.sourceforge.net/jmodbus/jmodbus-0_1_1.jar">Download JAR</a><br>
+	       <LI><a href="license.html">License</a><br>
+	       <LI><a href="structure.html">Class Structure</a><br>
+	       <LI><a href="api/index.html">API Documentation</a><br>
+	       <LI><a href="to-do-list.html">TO DO List</a><br>
+	       <LI><a href="http://sourceforge.net/tracker/?func=add&group_id=31946&atid=403879">Report Bug</a><br>
+	       <LI><a href="http://sourceforge.net/tracker/?atid=403882&group_id=31946&func=browse">Request Feature</a><br>
+	       <LI><a href="http://sourceforge.net/projects/jmodbus">Project Page</a>
+	    </UL>
+	    </p>
+	    <p align="center"><a href="http://sourceforge.net"><img
+		  src="http://sourceforge.net/sflogo.php?group_id=31946"
+		  width="88" height="31" border="0" alt="SourceForge Logo"></a>
+	    </p>
+	  </td>
+
+	  <td>
+	    <h2>What is it?</h2>
+
+	    <p>The jModbus project aims to provide Java libraries to
+               allow java based devices to comminciate as either master
+               or slave devices via ModbusRTU (Modbus), ModbusASCII (ModbusA) or 
+               ModbusTCP (Modnet).  The code is open source and designed to 
+               run on devices with a small footprint, such as the Dallas
+               Semiconductor TINI.
+	    </p>
+
+	    <p>The class structure is OO by deisgn, hopefully allowing for 
+               extensions such as SEMI over ModbusTCP to be written easily. 
+	    </p>
+
+	    <p>For more information relating to Modbus and Modbus TCP please refer to 
+               <A HREF="http://www.modbus.org">Open Modbus</A> and the 
+               <A HREF="http://www.modicon.com/openmbus">Modicon Modbus</A> site.  The modbus
+               protocol was orignally designed by <A HREF="http://www.schneiderelectric.com/">
+               Schneider Electric</A> (makers of Modicon PLCs) for communication 
+               with Modicon PLCs.
+	    </p>
+
+	    <h2>Example</h2>
+
+	    <p>This site shows a number of examples for the use of the jModbus code.<BR> 
+              A sample of a <A HREF="http://www.citect.com/">Citect</A> project using
+              the jModbus code to communicate with a network of TINIs over ModbusTCP (Modnet)
+              for taking temperature measurments using DS18S20 chips is shown <A HREF="citect-example.html"> 
+              here</A>.
+	    </p>
+
+	  </td>
+
+	  <td> 
+	    <h2><span style="font-weight: normal;">News</span><span
+	    style="color: black; font-weight: bold;">Items</span></h2>
+
+	    <p><span class="date">8-November-2001:</span> Version 0.1.1 
+	    released.  This new release has a working ASCII transport module
+	    and includes some bug fixes to the Master and Slave code relating 
+	    to bit manipulation routines.  This is likley to be the last release
+	    before the code from Dieter Wimberger is integrated.
+	    </p>
+
+	    <p><span class="date">10-October-2001:</span> Dieter Wimberger 
+	    from the Institute for Automation, University of Leoben, Austria
+	    has decided to open source a Modbus/TCP implementation he has 
+	    written and we will begin to merge the coed base shortly.
+	    </p>
+
+	    <p><span class="date">16-September-2001:</span> First release, 
+	    version 0.1.0 released.  Please download the full tar ball or
+	    just get the jar for library use.
+	    </p>
+
+	    <p><span class="date">10-August-2001:</span> First versions of
+	    the code have now been uploaded into the CVS archive.
+	    </p>
+
+	    <p><span class="date">3-August-2001:</span> jModbus web site 
+              goes live for the first time.  Code to follow shortly.
+	    </p>
+
+	  </td>
+
+	</tr>
+
+      </tbody>
+    </table>
+
+  <P> 
+      This site is in no way connected to or endorsed by either 
+      <A HREF="http://www.modbus.org">Open Modbus</A>, 
+      <A HREF="http://www.modicon.com">Modicon</A> or  
+      <A HREF="http://www.schneiderelectric.com/">Schneider Electric</A>
+  </P>
+
+  <P> 
+      Java is a trandmark of Sun Microsystems.  This site is in no way connected to or endorsed by <A HREF="http://www.sun.com">Sun Microsystems</A>, 
+  </P>
+
+  <P> 
+      The style of this site has been stolen from the <A HREF="http://xml1-wire.sourceforge.net">
+      XML 1-Wire Tagging Project</A> who I hope will not mind this incursion.
+  </P>
+
+  </body>
+
+</html>

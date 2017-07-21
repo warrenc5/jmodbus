@@ -1,0 +1,14 @@
+jModbus=net.sourceforge.jmodbus.Modbus;net.sourceforge.jmodbus.ModbusMessage;net.sourceforge.jmodbus.ModbusTransport;net.sourceforge.jmodbus.ByteUtils
+
+jModbus_Slave=%jModbus%;net.sourceforge.jmodbus.ModbusSlave;net.sourceforge.jmodbus.ModbusRegisterBank;net.sourceforge.jmodbus.ModbusCoilBank;
+
+jModbus_Master=%jModbus%;net.sourceforge.jmodbus.ModbusMaster
+
+jModbus_ASCII_Slave=%jModbus_Slave%;net.sourceforge.jmodbus.ModbusASCIISlave;net.sourceforge.jmodbus.ModbusASCIITransport
+jModbus_RTU_Slave=%jModbus_Slave%;net.sourceforge.jmodbus.ModbusRTUSlave;net.sourceforge.jmodbus.ModbusRTUTransport
+jModbus_TCP_Slave=%jModbus_Slave%;net.sourceforge.jmodbus.ModbusTCPSlave;net.sourceforge.jmodbus.ModbusTCPTransport
+
+jModbus_ASCII_Master=%jModbus_Master%;net.sourceforge.jmodbus.ModbusASCIIMaster;net.sourceforge.jmodbus.ModbusASCIITransport
+jModbus_RTU_Master=%jModbus_Master%;net.sourceforge.jmodbus.ModbusRTUMaster;net.sourceforge.jmodbus.ModbusRTUTransport
+jModbus_TCP_Master=%jModbus_Master%;net.sourceforge.jmodbus.ModbusTCPMaster;net.sourceforge.jmodbus.ModbusTCPTransport
+

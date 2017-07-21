@@ -1,0 +1,40 @@
+BODY
+{
+    FONT-FAMILY: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    MARGIN: 30pt 30pt 20pt
+}
+H1
+{
+    BORDER-BOTTOM: 1px solid;
+    BORDER-LEFT: 0px solid;
+    BORDER-RIGHT: 0px solid;
+    BORDER-TOP: 0px solid
+}
+H2
+{
+    COLOR: gray;
+    FONT-FAMILY: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    FONT-SIZE: medium
+}
+.xml
+{
+    FONT-FAMILY: Lucida Console, Courier New, Courier, monospace
+}
+.elem
+{
+    COLOR: #334cff
+}
+.example
+{
+    BACKGROUND: #e5e5e5;
+    PADDING-BOTTOM: 6px;
+    PADDING-LEFT: 6px;
+    PADDING-RIGHT: 6px;
+    PADDING-TOP: 6px
+}
+.date
+{
+    BACKGROUND: #ffffe5;
+    FONT-FAMILY: Lucida Console, Courier New, Courier, monospace;
+    FONT-SIZE: 80%
+}

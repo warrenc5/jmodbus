@@ -1,0 +1,31 @@
+
+          jModbus - The Java Modbus Project
+
+         (C) 2001 by The Java Modbus Project
+               jmodbus.sourceforge.net
+
+                    Release Notes
+
+
+First Release - Version 0.1.0
+
+First release of the jModbus project.  This release allows for the
+following functionality:
+1. Modbus TCP transport fully working, for both sending and receiving
+   frames. This code is fully robust and performs all avaliable type
+   checking
+2. Modbus Slave - The modbus slave implements the following functions
+   - Read Multiple Registers
+   - Read Input Registers
+   - Write Multiple Registers
+3. Modbus Master - The modbus master implements the following functions
+   - Read Multiple Registers
+   - Read Input Registers
+   - Write Multiple Registers
+4. ModbusTCPMaster and ModbusTCPSlave - both of these classes implements
+   the full functionality of their parent classes.
+
+This is still a limited release and more development will follow
+shortly.
+
+

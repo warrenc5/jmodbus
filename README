@@ -1,0 +1,129 @@
+
+          jModbus - The Java Modbus Project
+
+         (C) 2001 by The Java Modbus Project
+               jmodbus.sourceforge.net
+
+
+
+Contents:
+
+ 1. Introduction
+ 2. Licensing
+ 3. System Requirments
+ 4. Make Files
+
+
+
+1 - Introduction
+
+The jModbus project aims to provide Java libraries to
+allow java based devices to comminciate as either master
+or slave devices via ModbusRTU (Modbus), ModbusASCII (ModbusA) 
+or ModbusTCP (Modnet).  The code is open source and designed to 
+run on devices with a small footprint, such as the Dallas
+Semiconductor TINI.
+
+The class structure is OO by deisgn, hopefully allowing for 
+extenmsions such as SEMI over ModbusTCP to be written easily. 
+
+For more information relating to Modbus and Modbus TCP please 
+refer to Open Modbus (www.openmodbus.org) and the Modicon 
+Modbus site (www.modicon.com/openmodbus). The modbus protocol 
+was orignally designed by Schneider Electric (makers 
+of Modicon PLCs) for communication with Modicon PLCs. 
+
+The development of this project is hosted by Sourceforge.  For
+the most up to date code please see the home page at 
+jmodbus.sourceforge.net
+
+
+
+2 - Licensing
+
+The jModbus project is distrubuted under the following license
+
+Copyright (c) 2001 by The Java Modbus Project
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions 
+are met:
+
+ 1.  Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+ 2.  Redistributions in binary form must reproduce the above copyright 
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the 
+     distribution. 
+ 3.  Neither the name of the The Java Modbus Project nor the names of 
+     its contributors may be used to endorse or promote products 
+     derived from this software without specific prior written 
+     permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR 
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+3 - System Requirments
+
+Build the code from the source distribution you will need the following tools:
+
+  1. A working java compiler, see www.java.sun.com for more details.
+
+  2. If you wish to use the provided make files then you will need a working
+     version of make, such as gnu make. see www.gnu.org for more details.  If
+     you are working under a win32 environment you may want to look at
+     cygwin at www.cygwin.com
+
+  3. To build the ModbusASCII and ModbusRTU code you will need to have the
+     appropriate packages for the javax.comm Commjunication API installed.
+
+  4. If you wish to build the examples for the Dallas Semiconductor TINI you
+     will need to have a working TINI software development kit that can be
+     obtained from Dallas Semiconduction Corp. at www.ibutton.com/TINI/
+
+
+4 - Make Files
+
+We have attempted to write the make files in the most robust manner possible.  
+However to build the examples for the TINI the following lines at the top
+of the Makefile for each example project will need to be altered to reflect the
+setup of your machine.
+> 
+> TINIBIN = /usr/java/tini/bin
+> TINICLASSES = $(TINIBIN)/tiniclasses.jar
+> OWCLASSES = $(TINIBIN)/owapi_dependencies_TINI_001.jar
+> 
+These three environment variables have been defined to make the compiler and 
+TINIConverter commands much shorter and more understand.
+
+To simplify things it is recomended that you build the jmodbus.jar
+file and place this into you <jdk>\jre\lib\ext\ directory so that
+it is excessible all the time, instead of having to add it to your
+class path all the time (even though some of the example show this, for
+those who do not want to do this.)
+
+
+
+
+Java is a trade make of Sun Microsystems.  This project is in now way
+connected to or endorsed by Sun Microsystems.
+
+TINI is a trade mark of Dallas Semiconductor Corp.  This project is in now way
+connected to or endorsed by Dallas Semiconductor Corp.
+
+This project is in now way connected to or endorsed by Modicom.
+
+This project is in now way connected to or endorsed by Schneider Electric.
+

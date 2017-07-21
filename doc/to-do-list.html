@@ -1,0 +1,51 @@
+<html>
+
+  <head>
+    <title>The jModbus Project - Class Structure</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <h1 style="margin-top: 10pt; font-family: Verdana, Tahoma, Arial,
+      Helvetica, sans-serif; font-size: x-large; font-weight: normal;">
+      <span style="color: gray;">The j</span><span style="font-weight:
+      bold;">Modbus</span> <span style="color: gray;">Project - To Do 
+      List</span> 
+    </h1>
+
+  <P> 
+    The following is the lists of outstanding coding tasks.  Anyone who would 
+    like to take the bull by the horns and code them is more than welcome to.
+    These items are not in any particular order or importance.
+  </P>
+
+  <P>
+  <UL>
+    <LI> Write code to implement more functionality in the ModbusMaster class.
+
+    <LI> Write code to implement more functionality in the ModbusSlave class.
+
+    <LI> Implement mutexes or lock object in the ModbusCoilBank and 
+         ModbusRegisterBank classes to make sure they are thread safe.  
+	 (i.e. ModbusSlave and DataWorker thread will not write/read to 
+	 them at the same time)  This could be implemented having all 
+	 interface methods use a single function inside that is syncronised.
+    
+    <LI> Implement some code in the ModbusRTUTransport class as this is 
+         currently not implemented, mainly due to difficulties that will 
+	 be present in delimiting frames that are seperated by 3.5 
+	 character times.  A posible solution to this has been discussed
+	 on the TINI developers forum in August 2001.
+
+    <LI> Implement some code in the ModbusASCIITransport class as this is 
+         currently not implemented. 
+
+    <LI> Review implementation of ModbusMessage class to see if it should
+         be made a little more OO.
+
+  </UL>
+  </P>
+
+  </body>
+
+</html>
